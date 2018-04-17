@@ -135,14 +135,13 @@ View(sa_time)
 
 #Create long data
 sa_long <- sa_time %>% 
-  group_by(human) %>% 
-  gather(key = "time_type", value = "minutes", -human)
+  gather(key = "time_type", value = "minutes", -human, -geo)
 
 View(sa_long)
 
 
 #creating count of qualitative values
-sa_count <- sa_long%>%
+sa_count <- sa_long %>%
   count(time_type) %>% 
   mutate(prop = n / sum(n)) 
 
@@ -191,7 +190,7 @@ ggplot(data = sa_long, aes(x = minutes))+
 
 #To remove one value
 sa_clean <- sa_long %>% 
-  filter(minutes < 10000)
+  filter(minutes < 100)
 
 #Trying again
 
@@ -253,20 +252,3 @@ ggplot(data = sa_time, aes(y = now_now, x = just_now))+
   geom_point(aes(colour = geo))+
   geom_smooth(aes(colour = geo), method = "lm")+
   coord_equal(xlim = c(0, 60), ylim = c(0, 60))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
