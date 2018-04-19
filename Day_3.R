@@ -23,7 +23,7 @@ descdist(r_norm, discrete = FALSE, boot = 100)
 #uniform data
 y <- runif(100)
 par(mfrow = c(1, 1))
-plot(x = c(1, 100), y = y)
+plot(x = seq(1, 100), y = y)
 hist(y)
 descdist(y, discrete = FALSE)
 
