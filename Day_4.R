@@ -7,7 +7,7 @@
 
 #Libraries
 library(tidyverse)
-library(ggplot2)
+library(ggpubr)
 
 
 # First grab the data
@@ -24,7 +24,7 @@ chicks_sub
 #so are the chicken weights different for the different diets?
 
 # Run the t-test ----------------------------------------------------------
-compare.means(weight ~ Diet, data = chicks_sub, method = "t.test")
+compare_means(weight ~ Diet, data = chicks_sub, method = "t.test")
 t.test(weight~Diet, data = chicks_sub)
 
 
