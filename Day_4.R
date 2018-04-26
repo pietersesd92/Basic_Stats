@@ -71,7 +71,7 @@ TukeyHSD(chicks.aov1)
 
 #Libraries
 library(tidyverse)
-
+tibble
 #Visuals
 
 chick <- ChickWeight %>% 
@@ -175,3 +175,82 @@ summary(kruskal.test(weight ~ Diet, data = chicks_0_21))
 #Load this library for a non-parametric post-hoc test
 library(pgirmess)
 kruskalmc(weight ~ Diet, data = chicks_0_21)
+
+# Exercise 1 --------------------------------------------------------------
+
+library(tidyverse)
+
+#Does feed type have an effect on the mass of the pigs at the end of the experiment?
+
+# enter the mass at the end of the experiment
+feed_1 <- c(60.8, 57.0, 65.0, 58.6, 61.7)
+feed_2 <- c(68.7, 67.7, 74.0, 66.3, 69.8)
+feed_3 <- c(102.6, 102.1, 100.2, 96.5)
+feed_4 <- c(87.9, 84.2, 83.1, 85.7, 90.3)
+# make a dataframe
+bacon <- as.tibble(data.frame(
+  feed = c(
+    rep("Feed 1", length(feed_1)),
+    rep("Feed 2", length(feed_2)),
+    rep("Feed 3", length(feed_3)),
+    rep("Feed 4", length(feed_4))
+  ),
+  mass = c(feed_1, feed_2, feed_3, feed_4)
+))
+
+#Question: Does feed type have an effect on the mass of pigs at the end of the experiment?
+#There is no time factor to this experiment?
+#Are the masses recorded, being taken from the same pigs?
+#Number of mass recordings taken not consistent for all feeds... feed 3 only has three readings.
+
+#However...
+#H0: Feed type does not have any effect on the masses of the pigs at the end of the experiment.
+#H1: Feed type has an effect on the masses of the pigs at the end of the experiment.
+bacon
+
+bacon.aov1 <- aov(mass ~ feed, data = bacon)
+
+summary(bacon.aov1)
+
+#PR(>f) < 0.05, Therefore, the H0 is accepted, 
+#as the feed type has not had a significant effect on the mass of the pigs at the end of the experiment.
+
+
+# Exercise 2 --------------------------------------------------------------
+
+#Load the data
+datasets::ToothGrowth
+#H0: There is no significant difference in the tooth lengths observed, between the two Vitamin C delivery methods.
+#H1: There is a significant difference  in the tooth lengths observed , between the two vitamin C delivery methods.
+
+
+ToothGrowth_sub <- ToothGrowth
+
+toothgrowth.aov <- aov(len~supp, data = ToothGrowth)
+summary.aov(toothgrowth.aov)
+
+#Pr(>F) > 0.05
+
+#The null hypothesis is therefore not accepted and the alternate hypothesis is accepted.
+
+
+# Exercise 3 --------------------------------------------------------------
+
+#Loading data
+stress_fordays <- read_csv("stress_reduction.csv")
+
+Stress_Red<-stress$StressReduction;
+Treatment<-as.factor(stress$Treatment);
+Age<-as.factor(stress$Age)
+
+#Running the ANOVA
+stress_aov <- summary(aov(StressReduction ~ Treatment * Age, stress_fordays))
+
+TukeyHSD(aov(StressReduction ~ Treatment * Age, stress_fordays))
+
+#Visualizing the data
+ggplot(data = stress_fordays, aes(x = Age, y = Stress_Red))+
+  geom_boxplot(aes(fill = Treatment), notch = FALSE)+
+  labs(x = "Relative Age", y = "Stress Reduction",
+       title = "Stress Reduction on three age groups using three different treatments")
+
