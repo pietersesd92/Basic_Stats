@@ -6,7 +6,7 @@
 
 #Load libraries
 library(tidyverse)
-library(Rmisc)
+# library(Rmisc) # Unfortunately this overrides many dplyr functions
 
 #Load Data
 snakes <- read_csv("Snakes.CSV") %>% 
@@ -43,7 +43,7 @@ snakes_summary <- snakes %>%
 # Test a hypothesis -------------------------------------------------------
 
 #First calculate SE and CI
-snakes.summary2 <- summarySE(data = snakes, 
+snakes.summary2 <- Rmisc::summarySE(data = snakes, 
                              measurevar = "openings", 
                              groupvars = c("day"))
 
@@ -77,7 +77,7 @@ snakes.res <- residuals(snakes.all.aov)
 hist(snakes.res)
 
 #Visualise the homoscedasticity of results
-plot(fitted(snakes.aov), residuals(snakes.aov))
+plot(fitted(snakes.all.aov), residuals(snakes.all.aov))
 
 #Use Tukey analysis to 
 #Check Tukey results
@@ -142,7 +142,7 @@ plot3 <- ggplot(data = moths, aes(x = Location, y = count)) +
   geom_jitter(width = 0.05, shape = 21)
 
 library(ggpubr)
-ggarrange(plot1, plot2, plot3, labels="AUTO", ncol = 2, nrow = 3)
+ggarrange(plot1, plot2, plot3, labels="AUTO", ncol = 1, nrow = 3)
 
 #Are the residuals normal?
 moths.res <- residuals(moths.aov)
@@ -296,7 +296,15 @@ lower_tri <- get_lower_tri(cormat)
 library(reshape2)
 melted_cormat <- melt(lower_tri, na.rm = TRUE)
 
-Final_plot <- plot1 +
+Final_plot <- ggplot(data = melted_cormat2, aes(Var2, Var1, fill = value))+
+  geom_tile(color = "black")+
+  scale_fill_gradient2(low = "blue", high = "salmon", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Spearman\nCorrelation") +
+  theme_minimal()+ 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1))+
+  coord_fixed() +
   theme(
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
@@ -304,7 +312,9 @@ Final_plot <- plot1 +
     panel.border = element_blank(),
     panel.background = element_blank(),
     axis.ticks = element_blank()) +
-    guides(fill = guide_colorbar(barwidth = 1, barheight = 7,
+  guides(fill = guide_colorbar(barwidth = 1, barheight = 7,
                                title.position = "top", title.hjust = 0.5))
+
+Final_plot
 
 Final_plot
